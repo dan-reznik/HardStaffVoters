@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+Simulate your data frame
+
+```{r}
+sim_rows <- 1000
+set.seed(0)
+parties <- c("Labour","Conservative","Spont.Other","UKIP","Lib Dem")
+party_probs <- c(10,5,2,2,1) %>% {./sum(.)}
+ids=1:20
+df_voters <- tibble(pipd=sample(ids,sim_rows,replace=T),
+                    party=sample(parties,sim_rows,replace=T,prob=party_probs) %>%
+  arrange(pipd) %>%
+  group_by(pipd) %>%
+  mutate(wave=c(letters,LETTERS)[row_number()]) %>%
+  ungroup() %>%
+  select(pipd,wave,party)
+```
+
+Voting history
+
+```{r}
+df_voting_history <- df_voters %>%
+  group_by(pipd) %>%
+  summarize(party_n=n_distinct(party),
+            party_order=list(rle(party))
+            #first_party=map_chr(first(party_order),"values"),
+            #second_party=nth(party_order,2)
+            ) %>%
+  mutate(voted_parties=map(party_order,"values"),
+         voted_times=map(party_order,"lengths"),
+         party_1st=map_chr(voted_parties,first),
+         party_2nd=map_chr(voted_parties,~{if(length(.x)==1) .x else .x[2]})) %>%
+  select(-party_order)
+```
+

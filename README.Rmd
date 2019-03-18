@@ -47,10 +47,11 @@ df_voting_history <- df_voters %>%
   mutate(voted_parties=map(party_order,"values"),
          voted_times=map(party_order,"lengths")) %>% # decode rle class
   select(-party_order) %>% # get rid of original rle class
-  mutate(party_1st=map_chr(voted_parties,first),
-         party_2nd=map_chr(voted_parties,~{if(length(.x)==1) NA else .x[2]}),
-         flipped=!is.na(party_2nd),
-         parties_voted_for=map_int(voted_parties,length)) %>%
+  mutate(parties_voted_for=map_int(voted_parties,length),
+         party_1st=map_chr(voted_parties,first),
+         party_2nd=map2_chr(parties_voted_for,
+                            voted_parties,~{if(.x==1) NA else .y[2]}),
+         flipped=!is.na(party_2nd)) %>%
   select(pipd,party_1st,party_2nd,flipped,everything())
 ```
 

@@ -24,6 +24,8 @@ df_voters <- tibble(pipd=sample(ids,sim_rows,replace=T),
   mutate(wave=c(letters,LETTERS)[row_number()]) %>%
   ungroup() %>%
   select(pipd,wave,party)
+
+df_voters
 ```
 
 Voting history
@@ -41,6 +43,9 @@ df_voting_history <- df_voters %>%
          party_1st=map_chr(voted_parties,first),
          party_2nd=map_chr(voted_parties,~{if(length(.x)==1) NA else .x[2]}),
          flipped=!is.na(party_2nd)) %>%
-  select(-party_order)
+  select(-party_order) %>%
+  select(pipd,party_1st,party_2nd,flipped,everything())
+
+df_voting_history
 ```
 

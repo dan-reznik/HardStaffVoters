@@ -27,8 +27,10 @@ df_voters <- tibble(pipd=sample(ids,sim_rows,replace=T),
   mutate(wave=c(letters,LETTERS)[row_number()]) %>%
   ungroup() %>%
   select(pipd,wave,party)
+```
 
-df_voters
+```{r,results='as is',echo=F}
+knitr::kable(df_voters%>%head(10))
 ```
 
 ## Voting history
@@ -50,8 +52,10 @@ df_voting_history <- df_voters %>%
          flipped=!is.na(party_2nd)) %>%
   select(-party_order) %>%
   select(pipd,party_1st,party_2nd,flipped,everything())
+```
 
-df_voting_history
+```{r,results='as is',echo=F}
+knitr::kable(df_voting_history%>%head(10))
 ```
 
 ## Hope this helps!

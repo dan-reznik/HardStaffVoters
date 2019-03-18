@@ -41,10 +41,7 @@ The results you want appear in the party_1st, party_2nd, and "flipped" columns
 df_voting_history <- df_voters %>%
   group_by(pipd) %>%
   summarize(party_n=n_distinct(party),
-            party_order=list(rle(party))
-            #first_party=map_chr(first(party_order),"values"),
-            #second_party=nth(party_order,2)
-            ) %>%
+            party_order=list(rle(party))) %>%
   mutate(voted_parties=map(party_order,"values"),
          voted_times=map(party_order,"lengths"),
          party_1st=map_chr(voted_parties,first),

@@ -7,14 +7,14 @@ Dear Emily, have fun!
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -56,34 +56,34 @@ df_voters <- tibble(pipd=sample(ids,sim_rows,replace=T),
 Voting history
 --------------
 
-The results you want appear in the party\_1st, party\_2nd, and "flipped" columns
+The results you want appear in the party\_1st, party\_2nd, and "flipped" columns. The nifty trick is the use of base-r's "rle" (run-length encoding). Notice how the history of each voter is stored "horizontally" (list-columns).
 
 ``` r
 df_voting_history <- df_voters %>%
   group_by(pipd) %>%
-  summarize(party_n=n_distinct(party),
-            party_order=list(rle(party))) %>%
+  summarize(party_order=list(rle(party))) %>% # run-length encoding
   mutate(voted_parties=map(party_order,"values"),
-         voted_times=map(party_order,"lengths"),
-         party_1st=map_chr(voted_parties,first),
+         voted_times=map(party_order,"lengths")) %>% # decode rle class
+  select(-party_order) %>% # get rid of original rle class
+  mutate(party_1st=map_chr(voted_parties,first),
          party_2nd=map_chr(voted_parties,~{if(length(.x)==1) NA else .x[2]}),
-         flipped=!is.na(party_2nd)) %>%
-  select(-party_order) %>%
+         flipped=!is.na(party_2nd),
+         parties_voted_for=map_int(voted_parties,length)) %>%
   select(pipd,party_1st,party_2nd,flipped,everything())
 ```
 
-|  pipd| party\_1st   | party\_2nd   | flipped |  party\_n| voted\_parties                                                                       | voted\_times        |
-|-----:|:-------------|:-------------|:--------|---------:|:-------------------------------------------------------------------------------------|:--------------------|
-|     1| Conservative | UKIP         | TRUE    |         2| c("Conservative", "UKIP", "Conservative")                                            | c(2, 1, 4)          |
-|     2| Conservative | NA           | FALSE   |         1| Conservative                                                                         | 9                   |
-|     3| Conservative | NA           | FALSE   |         1| Conservative                                                                         | 8                   |
-|     4| Conservative | Labour       | TRUE    |         2| c("Conservative", "Labour", "Conservative")                                          | c(7, 1, 3)          |
-|     5| Conservative | UKIP         | TRUE    |         3| c("Conservative", "UKIP", "Conservative", "Labour", "Conservative")                  | c(4, 1, 1, 1, 1)    |
-|     6| Conservative | Labour       | TRUE    |         3| c("Conservative", "Labour", "Conservative", "Labour", "Spont.Other", "Conservative") | c(2, 1, 2, 1, 1, 6) |
-|     7| Conservative | Spont.Other  | TRUE    |         2| c("Conservative", "Spont.Other", "Conservative")                                     | c(1, 1, 11)         |
-|     8| Labour       | Conservative | TRUE    |         2| c("Labour", "Conservative")                                                          | c(1, 12)            |
-|     9| Labour       | Conservative | TRUE    |         2| c("Labour", "Conservative", "Labour")                                                | c(1, 4, 1)          |
-|    10| Conservative | NA           | FALSE   |         1| Conservative                                                                         | 8                   |
+|  pipd| party\_1st   | party\_2nd   | flipped | voted\_parties                                                                       | voted\_times        |  parties\_voted\_for|
+|-----:|:-------------|:-------------|:--------|:-------------------------------------------------------------------------------------|:--------------------|--------------------:|
+|     1| Conservative | UKIP         | TRUE    | c("Conservative", "UKIP", "Conservative")                                            | c(2, 1, 4)          |                    3|
+|     2| Conservative | NA           | FALSE   | Conservative                                                                         | 9                   |                    1|
+|     3| Conservative | NA           | FALSE   | Conservative                                                                         | 8                   |                    1|
+|     4| Conservative | Labour       | TRUE    | c("Conservative", "Labour", "Conservative")                                          | c(7, 1, 3)          |                    3|
+|     5| Conservative | UKIP         | TRUE    | c("Conservative", "UKIP", "Conservative", "Labour", "Conservative")                  | c(4, 1, 1, 1, 1)    |                    5|
+|     6| Conservative | Labour       | TRUE    | c("Conservative", "Labour", "Conservative", "Labour", "Spont.Other", "Conservative") | c(2, 1, 2, 1, 1, 6) |                    6|
+|     7| Conservative | Spont.Other  | TRUE    | c("Conservative", "Spont.Other", "Conservative")                                     | c(1, 1, 11)         |                    3|
+|     8| Labour       | Conservative | TRUE    | c("Labour", "Conservative")                                                          | c(1, 12)            |                    2|
+|     9| Labour       | Conservative | TRUE    | c("Labour", "Conservative", "Labour")                                                | c(1, 4, 1)          |                    3|
+|    10| Conservative | NA           | FALSE   | Conservative                                                                         | 8                   |                    1|
 
 Hope this helps!
 ----------------

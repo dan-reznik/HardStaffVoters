@@ -37,19 +37,20 @@ knitr::kable(df_voters%>%head(10))
 
 ## Voting history
 
-The results you want appear in the party_1st, party_2nd, and "flipped" columns
+The results you want appear in the party_1st, party_2nd, and "flipped" columns.
+The nifty trick is the use of base-r's "rle" (run-length encoding). Notice how the history of each voter is stored "horizontally" (list-columns).
 
 ```{r}
 df_voting_history <- df_voters %>%
   group_by(pipd) %>%
-  summarize(party_n=n_distinct(party),
-            party_order=list(rle(party))) %>%
+  summarize(party_order=list(rle(party))) %>% # run-length encoding
   mutate(voted_parties=map(party_order,"values"),
-         voted_times=map(party_order,"lengths"),
-         party_1st=map_chr(voted_parties,first),
+         voted_times=map(party_order,"lengths")) %>% # decode rle class
+  select(-party_order) %>% # get rid of original rle class
+  mutate(party_1st=map_chr(voted_parties,first),
          party_2nd=map_chr(voted_parties,~{if(length(.x)==1) NA else .x[2]}),
-         flipped=!is.na(party_2nd)) %>%
-  select(-party_order) %>%
+         flipped=!is.na(party_2nd),
+         parties_voted_for=map_int(voted_parties,length)) %>%
   select(pipd,party_1st,party_2nd,flipped,everything())
 ```
 

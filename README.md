@@ -1,6 +1,6 @@
 
 Dear Emily, have fun!
-=====================
+---------------------
 
 ``` r
 library(tidyverse)
@@ -18,7 +18,7 @@ library(tidyverse)
     ## ✖ dplyr::lag()    masks stats::lag()
 
 Simulating your data frame
-==========================
+--------------------------
 
 Skewing toward Conservative votes...
 
@@ -57,7 +57,7 @@ df_voters
     ## # … with 990 more rows
 
 Voting history
-==============
+--------------
 
 The results you want appear in the party\_1st, party\_2nd, and "flipped" columns
 
@@ -94,3 +94,6 @@ df_voting_history
     ##  9     9 Labour       Conservati… TRUE          2 <chr [3]>     <int [3]>  
     ## 10    10 Conservative <NA>        FALSE         1 <chr [1]>     <int [1]>  
     ## # … with 90 more rows
+
+Hope this helps!
+----------------

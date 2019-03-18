@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-Dear Emily, have fun!
----------------------
+Dear Emily, shall we sort voters? 😄
+-----------------------------------
 
 ``` r
 library(tidyverse)
@@ -9,7 +9,7 @@ library(tidyverse)
 
     ## ── Attaching packages ────────────────────────────────────────── tidyverse 1.2.1 ──
 
-    ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
+    ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.2  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
@@ -85,5 +85,5 @@ df_voting_history <- df_voters %>%
 |     9| Labour       | Conservative | TRUE    | c("Labour", "Conservative", "Labour")                                                | c(1, 4, 1)          |                    3|
 |    10| Conservative | NA           | FALSE   | Conservative                                                                         | 8                   |                    1|
 
-Hope this helps!
-----------------
+Hope this helps! 😄
+------------------

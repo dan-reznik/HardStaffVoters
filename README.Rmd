@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## Dear Emily, have fun!
+## Dear Emily, shall we sort voters? `r emo::ji("smile")`
 
 ```{r}
 library(tidyverse)
@@ -58,4 +58,4 @@ df_voting_history <- df_voters %>%
 knitr::kable(df_voting_history%>%head(10))
 ```
 
-## Hope this helps!
+## Hope this helps! `r emo::ji("smile")`

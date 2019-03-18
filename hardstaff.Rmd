@@ -13,10 +13,12 @@ Simulate your data frame
 sim_rows <- 1000
 set.seed(0)
 parties <- c("Labour","Conservative","Spont.Other","UKIP","Lib Dem")
-party_probs <- c(10,5,2,2,1) %>% {./sum(.)}
-ids=1:20
+# skew it a bit
+party_probs <- c(20,200,5,5,1) %>% {./sum(.)}
+ids=1:100
+
 df_voters <- tibble(pipd=sample(ids,sim_rows,replace=T),
-                    party=sample(parties,sim_rows,replace=T,prob=party_probs) %>%
+                    party=sample(parties,sim_rows,replace=T,prob=party_probs)) %>%
   arrange(pipd) %>%
   group_by(pipd) %>%
   mutate(wave=c(letters,LETTERS)[row_number()]) %>%
@@ -37,7 +39,8 @@ df_voting_history <- df_voters %>%
   mutate(voted_parties=map(party_order,"values"),
          voted_times=map(party_order,"lengths"),
          party_1st=map_chr(voted_parties,first),
-         party_2nd=map_chr(voted_parties,~{if(length(.x)==1) .x else .x[2]})) %>%
+         party_2nd=map_chr(voted_parties,~{if(length(.x)==1) NA else .x[2]}),
+         flipped=!is.na(party_2nd)) %>%
   select(-party_order)
 ```
 
